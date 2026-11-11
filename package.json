@@ -9,7 +9,7 @@
     "backend": "npm --prefix backend start",
     "frontend": "npm --prefix frontend run dev",
     "seed": "npm --prefix backend run seed",
-    "build": "npm --prefix frontend run build"
+    "build": "npm --prefix frontend install && npm --prefix frontend run build"
   },
   "keywords": [
     "mern",
@@ -21,6 +21,13 @@
   ],
   "author": "Community Map Team",
   "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "mongoose": "^8.9.5",
+    "morgan": "^1.10.0"
+  },
   "devDependencies": {
     "concurrently": "^9.1.2"
   }

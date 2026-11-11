@@ -14,7 +14,24 @@ const app = express();
 // Middlewares
 app.use(cors());
 app.use(express.json());
-app.use(morgan('dev'));
+if (process.env.NODE_ENV !== 'production') {
+  app.use(morgan('dev'));
+}
+
+// Ensure database is connected for requests
+app.use(async (req, res, next) => {
+  try {
+    await connectDB();
+    next();
+  } catch (err) {
+    console.error('Database connection error on request:', err.message);
+    res.status(503).json({
+      success: false,
+      message: 'Database connection unavailable. Please check MONGODB_URI.',
+      error: err.message,
+    });
+  }
+});
 
 // API Routes
 app.use('/api/resources', require('./routes/resourceRoutes'));
@@ -49,7 +66,7 @@ app.use((err, req, res, next) => {
 
 const PORT = process.env.PORT || 5000;
 
-// Initialize Server & Database
+// Initialize Server & Database for standard Node process
 const startServer = async () => {
   try {
     await connectDB();
@@ -74,4 +91,8 @@ const startServer = async () => {
   }
 };
 
-startServer();
+if (require.main === module && !process.env.VERCEL) {
+  startServer();
+}
+
+module.exports = app;
