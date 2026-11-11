@@ -18,16 +18,24 @@ if (process.env.NODE_ENV !== 'production') {
   app.use(morgan('dev'));
 }
 
-// Ensure database is connected for requests
+// Serverless DB connection middleware (ensures DB is ready before API calls)
 app.use(async (req, res, next) => {
   try {
     await connectDB();
+    // Auto-replenish sample data if empty
+    if (req.path.startsWith('/api/resources') && req.method === 'GET') {
+      const count = await Resource.countDocuments();
+      if (count === 0) {
+        console.log('⚡ Populating initial community resources...');
+        await Resource.insertMany(sampleResources);
+      }
+    }
     next();
   } catch (err) {
     console.error('Database connection error on request:', err.message);
     res.status(503).json({
       success: false,
-      message: 'Database connection unavailable. Please check MONGODB_URI.',
+      message: 'Database connection unavailable.',
       error: err.message,
     });
   }
@@ -82,8 +90,8 @@ const startServer = async () => {
       console.log(`ℹ️ Database currently contains ${resourceCount} community resources.`);
     }
 
-    app.listen(PORT, () => {
-      console.log(`🚀 Local Resource Map Server running on http://localhost:${PORT}`);
+    app.listen(PORT, '0.0.0.0', () => {
+      console.log(`🚀 Local Resource Map Server running on http://127.0.0.1:${PORT} and http://localhost:${PORT}`);
     });
   } catch (error) {
     console.error('❌ Failed to start server:', error.message);
