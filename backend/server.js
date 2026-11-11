@@ -54,10 +54,11 @@ const startServer = async () => {
   try {
     await connectDB();
 
-    // Auto-seed if database is empty
+    // Auto-seed if database is empty or updated
     const resourceCount = await Resource.countDocuments();
-    if (resourceCount === 0) {
-      console.log('⚡ No resources found. Auto-populating initial sample resources...');
+    if (resourceCount < sampleResources.length) {
+      console.log(`⚡ Updating database with ${sampleResources.length} community resources...`);
+      await Resource.deleteMany({});
       await Resource.insertMany(sampleResources);
       console.log(`✅ Loaded ${sampleResources.length} sample community resources into database.`);
     } else {
