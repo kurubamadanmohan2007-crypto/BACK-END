@@ -1,0 +1,27 @@
+{
+  "name": "local-resource-map",
+  "version": "1.0.0",
+  "description": "Local Resource Map - Complete MERN Stack Community Directory",
+  "scripts": {
+    "start": "concurrently \"npm --prefix backend start\" \"npm --prefix frontend run dev\"",
+    "dev": "concurrently \"npm --prefix backend start\" \"npm --prefix frontend run dev\"",
+    "install-all": "npm --prefix backend install && npm --prefix frontend install",
+    "backend": "npm --prefix backend start",
+    "frontend": "npm --prefix frontend run dev",
+    "seed": "npm --prefix backend run seed",
+    "build": "npm --prefix frontend run build"
+  },
+  "keywords": [
+    "mern",
+    "community-resources",
+    "react",
+    "node",
+    "express",
+    "mongodb"
+  ],
+  "author": "Community Map Team",
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}
